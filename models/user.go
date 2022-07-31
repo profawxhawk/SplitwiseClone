@@ -2,5 +2,9 @@ package models
 
 type User struct {
 	ID   int    `json:"id"`
-	name string `json:"name"`
+	Name string `json:"name"`
+}
+
+func NewUser(name string) *User {
+	return &User{Name: name}
 }

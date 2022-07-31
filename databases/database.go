@@ -2,7 +2,7 @@ package databases
 
 import (
 	"SplitwiseClone/configs"
-	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"log"
 	"strings"
@@ -10,13 +10,15 @@ import (
 
 func InitDB() *gorm.DB {
 	connectionString := getDBConnectionString(configs.GetDBConfig())
+	log.Println("connectionString", connectionString)
 	return Connect(connectionString)
 }
 
 func getDBConnectionString(dbConfig *configs.DBConfig) string {
-	dataSourceFormat := "{username}:{password}@tcp({host}:{port})/{database}?parseTime=true&timeout=5s&rejectReadOnly=true"
+	dataSourceFormat := "{driver}://{username}:{password}@{host}:{port}/{database}"
 
 	r := strings.NewReplacer(
+		"{driver}", dbConfig.Driver,
 		"{username}", dbConfig.Username,
 		"{password}", dbConfig.Password,
 		"{host}", dbConfig.Host,
@@ -28,10 +30,9 @@ func getDBConnectionString(dbConfig *configs.DBConfig) string {
 }
 
 func Connect(connectionString string) *gorm.DB {
-	dbInstance, err := gorm.Open(mysql.Open(connectionString), &gorm.Config{})
+	dbInstance, err := gorm.Open(postgres.Open(connectionString), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)
-		panic("Cannot connect to DB")
 	}
 	log.Println("Connected to Database...")
 	return dbInstance
