@@ -2,5 +2,9 @@ package models
 
 type Group struct {
 	ID   int    `json:"id"`
-	name string `json:"name"`
+	Name string `json:"name"`
+}
+
+func NewGroup(name string) *Group {
+	return &Group{Name: name}
 }

@@ -8,6 +8,7 @@ import (
 
 type ControllerInterface interface {
 	AddUserController(c *gin.Context)
+	AddGroupController(c *gin.Context)
 }
 
 type Controller struct {
@@ -31,5 +32,21 @@ func (controller *Controller) AddUserController(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"userId": userId,
+	})
+}
+
+func (controller *Controller) AddGroupController(c *gin.Context) {
+	name := c.Query("name")
+	if name == "" {
+		c.AbortWithStatusJSON(400, gin.H{"message": "name parameter not found"})
+		return
+	}
+	groupId, err := controller.CreatGroupEntity(name)
+	if err != nil {
+		c.AbortWithStatusJSON(500, gin.H{"message": "Server error, please try again"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"groupId": groupId,
 	})
 }

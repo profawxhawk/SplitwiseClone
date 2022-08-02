@@ -9,6 +9,6 @@ type Services struct {
 }
 
 func InitServices(repos *repositories.Repositories) *Services {
-	entityCreationService := NewEntityCreationService(repos.UserRepo)
+	entityCreationService := NewEntityCreationService(repos.UserRepo, repos.GroupRepo)
 	return &Services{EntityCreationService: entityCreationService}
 }
