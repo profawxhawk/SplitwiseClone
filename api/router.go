@@ -17,8 +17,9 @@ func NewRouter(controllerInterface controllers.ControllerInterface) *Router {
 
 func (router *Router) StartRouter() {
 
-	router.ginRouter.GET("/api/users/add", router.AddUserController)
-	router.ginRouter.GET("/api/groups/add", router.AddGroupController)
+	router.ginRouter.POST("/api/users/add", router.AddUserController)
+	router.ginRouter.POST("/api/groups/add", router.AddGroupController)
+	router.ginRouter.POST("/api/users/addToGroup", router.AddUserToGroupController)
 	err := router.ginRouter.Run(":8080")
 	if err != nil {
 		log.Fatal("Error running router instance")

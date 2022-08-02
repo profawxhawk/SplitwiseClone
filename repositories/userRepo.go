@@ -8,6 +8,7 @@ import (
 
 type UserRepoInterface interface {
 	CreateUser(name string) (*models.User, error)
+	CreateUserGroupEntry(userId int, groupId int) bool
 }
 
 type UserRepo struct {
@@ -21,6 +22,7 @@ func NewUserRepo(db *gorm.DB) *UserRepo {
 	}
 	return &UserRepo{db: db}
 }
+
 func (userRepo *UserRepo) CreateUser(name string) (*models.User, error) {
 	user := models.NewUser(name)
 	result := userRepo.db.Create(&user)
@@ -28,4 +30,12 @@ func (userRepo *UserRepo) CreateUser(name string) (*models.User, error) {
 		return nil, result.Error
 	}
 	return user, nil
+}
+
+func (userRepo *UserRepo) CreateUserGroupEntry(userId int, groupId int) bool {
+	result := userRepo.db.Model(&models.User{ID: userId}).Association("Groups").Append(&models.Group{ID: groupId})
+	if result.Error != nil {
+		return false
+	}
+	return true
 }
