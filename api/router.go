@@ -20,7 +20,8 @@ func (router *Router) StartRouter() {
 	router.ginRouter.POST("/api/users/add", router.AddUserController)
 	router.ginRouter.POST("/api/groups/add", router.AddGroupController)
 	router.ginRouter.POST("/api/users/addToGroup", router.AddUserToGroupController)
-	//router.ginRouter.POST("/api/groups/addExpenseToGroup", router.AddExpenseToGroupController)
+	router.ginRouter.POST("/api/groups/addExpenseToGroup", router.AddExpenseToGroupController)
+	router.ginRouter.GET("/api/users/getAllExpenses", router.GetAllExpensesController)
 	err := router.ginRouter.Run(":8080")
 	if err != nil {
 		log.Fatal("Error running router instance")
