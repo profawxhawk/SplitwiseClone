@@ -35,10 +35,11 @@ type AddUserToGroupRequest struct {
 }
 
 func (req *AddUserToGroupRequest) ValidateRequestData(c *gin.Context) bool {
-	if err := c.BindJSON(&req); err != nil {
-		return SendServerErrorResponse(c, err)
+	if req.UserId == 0 || req.GroupId == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+		return false
 	}
-	return req.ValidateRequestData(c)
+	return true
 }
 
 func (req *AddUserToGroupRequest) GetPostRequests(c *gin.Context) bool {
@@ -49,16 +50,21 @@ func (req *AddUserToGroupRequest) GetPostRequests(c *gin.Context) bool {
 }
 
 type AddExpenseToGroupRequest struct {
-	UserId        int            `json:"userId"`
-	GroupId       int            `json:"groupId"`
-	TotalAmount   float32        `json:"totalAmount"`
-	ExpenseType   int            `json:"expenseType"` // go doesn't have enums by default, so using int
-	UserAmountMap map[int]string `json:"userAmountMap"`
+	UserId        int             `json:"userId"`
+	GroupId       int             `json:"groupId"`
+	ExpenseName   string          `json:"expenseName"`
+	TotalAmount   float32         `json:"totalAmount"`
+	ExpenseType   int             `json:"expenseType"` // go doesn't have enums by default, so using int
+	UserAmountMap map[int]float32 `json:"userAmountMap"`
 	requests
 }
 
 func (req *AddExpenseToGroupRequest) ValidateRequestData(c *gin.Context) bool {
-	if req.UserId == 0 || req.GroupId == 0 || req.TotalAmount == 0 || req.ExpenseType == 0 || req.UserAmountMap == nil {
+	if req.UserId == 0 || req.GroupId == 0 || req.ExpenseName == "" || req.TotalAmount == 0 {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
+		return false
+	}
+	if req.ExpenseType == 1 && req.UserAmountMap == nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"message": "Bad request"})
 		return false
 	}

@@ -6,9 +6,11 @@ import (
 
 type Services struct {
 	EntityCreationService *EntityCreationService
+	TransactionService    *TransactionService
 }
 
 func InitServices(repos *repositories.Repositories) *Services {
 	entityCreationService := NewEntityCreationService(repos.UserRepo, repos.GroupRepo)
-	return &Services{EntityCreationService: entityCreationService}
+	transactionService := NewTransactionService(repos.ExpenseRepo, repos.GroupRepo, repos.UserRepo)
+	return &Services{EntityCreationService: entityCreationService, TransactionService: transactionService}
 }

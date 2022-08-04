@@ -8,6 +8,7 @@ import (
 
 type GroupRepoInterface interface {
 	CreateGroup(name string) (*models.Group, error)
+	GetAllUserIdsInGroupExcludingGivenUser(groupId int, userId int) ([]int, error)
 }
 
 type GroupRepo struct {
@@ -28,4 +29,12 @@ func (groupRepo *GroupRepo) CreateGroup(name string) (*models.Group, error) {
 		return nil, result.Error
 	}
 	return group, nil
+}
+
+func (groupRepo *GroupRepo) GetAllUserIdsInGroupExcludingGivenUser(groupId int, userId int) ([]int, error) {
+	userIdList := make([]int, 0)
+	err := groupRepo.db.Model(&models.User{}).Preload("Groups", "id != ?", groupId).
+		Where("id != ?", userId).
+		Select("id").Find(&userIdList).Error
+	return userIdList, err
 }

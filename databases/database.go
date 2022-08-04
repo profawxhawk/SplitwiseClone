@@ -10,7 +10,6 @@ import (
 
 func InitDB() *gorm.DB {
 	connectionString := getDBConnectionString(configs.GetDBConfig())
-	log.Println("connectionString", connectionString)
 	return Connect(connectionString)
 }
 
